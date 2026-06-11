@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
+import employeeRoutes from './routes/employeeRoutes';
+import attendanceRoutes from './routes/attendanceRoutes';
+import leaveRoutes from './routes/leaveRoutes';
 
 dotenv.config();
 
@@ -14,6 +17,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/leaves', leaveRoutes);
 
 // Basic routes
 app.get('/', (req, res) => {

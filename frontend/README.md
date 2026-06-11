@@ -71,3 +71,5 @@ export default defineConfig([
   },
 ])
 ```
+Email: shehara@example.com
+Password: password123
