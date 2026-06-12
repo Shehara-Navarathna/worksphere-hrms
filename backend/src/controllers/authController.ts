@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma';
+import { AuthRequest } from '../middleware/auth';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -12,9 +13,7 @@ export const register = async (req: Request, res: Response) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({
-        message: 'User already exists',
-      });
+      return res.status(400).json({ message: 'User already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,15 +37,9 @@ export const register = async (req: Request, res: Response) => {
       message: 'User registered successfully',
       user,
     });
-  } catch (error: any) {
-    console.error('FULL ERROR:', error);
-    console.error('STACK:', error?.stack);
-
-    return res.status(500).json({
-      message: 'Server error',
-      error: String(error),
-      stack: error?.stack,
-    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -59,20 +52,13 @@ export const login = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.status(400).json({
-        message: 'Invalid credentials',
-      });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const isValidPassword = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(400).json({
-        message: 'Invalid credentials',
-      });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
@@ -82,9 +68,7 @@ export const login = async (req: Request, res: Response) => {
         role: user.role,
       },
       process.env.JWT_SECRET as string,
-      {
-        expiresIn: '24h',
-      }
+      { expiresIn: '24h' }
     );
 
     return res.json({
@@ -97,14 +81,43 @@ export const login = async (req: Request, res: Response) => {
         role: user.role,
       },
     });
-  } catch (error: any) {
-    console.error('FULL ERROR:', error);
-    console.error('STACK:', error?.stack);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
 
-    return res.status(500).json({
-      message: 'Server error',
-      error: String(error),
-      stack: error?.stack,
+export const changePassword = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
     });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!isValidPassword) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword }
+    });
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

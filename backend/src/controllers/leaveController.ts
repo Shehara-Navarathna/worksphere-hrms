@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 
@@ -75,6 +75,29 @@ export const updateLeaveStatus = async (req: AuthRequest, res: Response) => {
     });
 
     res.json({ message: `Leave ${status.toLowerCase()} successfully`, leave });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getTodayLeaves = async (req: AuthRequest, res: Response) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const leaves = await prisma.leaveRequest.count({
+      where: {
+        status: 'APPROVED',
+        startDate: { lte: tomorrow },
+        endDate: { gte: today }
+      }
+    });
+    
+    res.json({ count: leaves });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

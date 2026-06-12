@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -13,11 +14,18 @@ model User {
   name          String
   role          Role           @default(EMPLOYEE)
   departmentId  String?
+  managerId     String? 
+  phone         String?        // Add this
+  location      String?        // References the manager of this employee
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   attendance    Attendance[]
   leaveRequests LeaveRequest[]
   department    Department?    @relation(fields: [departmentId], references: [id])
+  
+  // Self-relation for manager-employee
+  manager       User?          @relation("EmployeeManager", fields: [managerId], references: [id])
+  employees     User[]         @relation("EmployeeManager")
 }
 
 model Department {

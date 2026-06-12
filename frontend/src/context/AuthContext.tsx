@@ -1,14 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  type ReactNode,
-} from 'react';
-
-import type {
-    User,
-    AuthContextType,
-} from '../types/auth';
+import { createContext, useContext, useState, ReactNode } from 'react';
+import type { User, AuthContextType } from '../types/auth';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -19,7 +10,6 @@ interface Props {
 export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem('user');
-
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
@@ -30,7 +20,6 @@ export function AuthProvider({ children }: Props) {
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
-
     setToken(newToken);
     setUser(newUser);
   };
@@ -38,7 +27,6 @@ export function AuthProvider({ children }: Props) {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
     setToken(null);
     setUser(null);
   };
@@ -60,12 +48,8 @@ export function AuthProvider({ children }: Props) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
   if (!context) {
-    throw new Error(
-      'useAuth must be used inside AuthProvider'
-    );
+    throw new Error('useAuth must be used inside AuthProvider');
   }
-
   return context;
 }

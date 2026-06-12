@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 
@@ -77,6 +77,28 @@ export const getAttendance = async (req: AuthRequest, res: Response) => {
     });
 
     res.json(attendance);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getTodayAttendance = async (req: AuthRequest, res: Response) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const count = await prisma.attendance.count({
+      where: {
+        date: { gte: today, lt: tomorrow },
+        checkIn: { not: null }
+      }
+    });
+    
+    res.json({ count });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
