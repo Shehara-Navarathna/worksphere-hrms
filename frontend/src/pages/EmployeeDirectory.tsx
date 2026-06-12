@@ -329,28 +329,26 @@ export default function EmployeeDirectory() {
         <Box sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
             <TextField
-              placeholder="Search employees..."
-              size="small"
-              value={search}
-              onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
-              sx={{ flex: 1, minWidth: 240 }}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: 18, color: '#94a3b8' }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: search && (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearch('')}>
-                        <ClearIcon sx={{ fontSize: 16, color: '#94a3b8' }} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }
-              }}
-            />
+  placeholder="Search employees..."
+  size="small"
+  value={search}
+  onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
+  sx={{ flex: 1, minWidth: 240 }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon sx={{ fontSize: 18, color: '#94a3b8' }} />
+      </InputAdornment>
+    ),
+    endAdornment: search && (
+      <InputAdornment position="end">
+        <IconButton size="small" onClick={() => setSearch('')}>
+          <ClearIcon sx={{ fontSize: 16, color: '#94a3b8' }} />
+        </IconButton>
+      </InputAdornment>
+    ),
+  }}
+/>
             <Button
               onClick={handleFilterOpen}
               variant={hasActiveFilters ? 'contained' : 'outlined'}

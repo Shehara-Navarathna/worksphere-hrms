@@ -511,24 +511,23 @@ export default function EmployeeDashboard() {
           </FormControl>
           
           <TextField
-            label="Start Date"
-            type="date"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={formData.startDate}
-            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
+  label="Start Date"
+  type="date"
+  fullWidth
+  sx={{ mb: 2 }}
+  value={formData.startDate}
+  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+  InputLabelProps={{ shrink: true }}
+/>
           
           <TextField
             label="End Date"
             type="date"
             fullWidth
             sx={{ mb: 2 }}
-            value={formData.endDate}
-            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
+  value={formData.startDate}
+  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+  InputLabelProps={{ shrink: true }}/>
           
           {formData.startDate && formData.endDate && (
             <Alert severity="info" sx={{ mb: 2 }}>

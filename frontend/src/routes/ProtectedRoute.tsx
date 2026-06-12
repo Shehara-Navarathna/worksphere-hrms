@@ -3,19 +3,18 @@ import { useAuth } from '../context/AuthContext';
 
 interface Props {
   children: React.ReactNode;
-  allowedRoles?: string[];   // Optional - if not provided, any logged-in user can access
+  allowedRoles?: ('ADMIN' | 'MANAGER' | 'EMPLOYEE')[];
 }
 
 export default function ProtectedRoute({ children, allowedRoles }: Props) {
-  const { isAuthenticated, user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // Role check if allowedRoles is provided
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={`/${user.role.toLowerCase()}`} replace />;
   }
 
   return <>{children}</>;

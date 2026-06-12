@@ -59,7 +59,7 @@ export default function ManagerTeam() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             sx={{ width: { xs: '100%', sm: 300 } }}
-            slotProps={{
+            InputProps={{
               input: {
                 startAdornment: (
                   <InputAdornment position="start">

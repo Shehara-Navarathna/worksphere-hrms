@@ -1,10 +1,31 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
-import type { User, AuthContextType } from '../types/auth';
+import React, { createContext, useContext, useState } from 'react';
+
+// Define User type directly in the file
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'ADMIN' | 'MANAGER' | 'EMPLOYEE';
+  managerId?: string;
+  manager?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+
+interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  login: (token: string, user: User) => void;
+  logout: () => void;
+  isAuthenticated: boolean;
+}
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface Props {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export function AuthProvider({ children }: Props) {
