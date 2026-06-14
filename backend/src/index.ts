@@ -20,7 +20,11 @@ const allowedOrigins = [
 ].filter((origin): origin is string => origin !== undefined && origin !== '');
 
 app.use(cors({
-  origin: allowedOrigins.length > 0 ? allowedOrigins : true,
+  origin: [
+    'https://worksphere-hrms.netlify.app',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
